@@ -1,3 +1,3 @@
 docker-compose up -d
-lt --port 8080 --subdomain coursemanagement
+lt --port 8000 --subdomain coursemanagement
 poetry run uvicorn app.main:app --reload

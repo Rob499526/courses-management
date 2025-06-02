@@ -19,7 +19,7 @@ class User(Base):
     phone_number = Column(String(20))
     avatar = Column(String(200))
     role = Column(role_enum, default=Role.USER)
-    auth0_id = Column(String(100), unique=True)
+    auth0_id = Column(String(100), unique=True, index=True)
 
 class Course(Base):
     __tablename__ = "courses"

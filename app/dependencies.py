@@ -39,9 +39,8 @@ async def get_current_user(
             raise HTTPException(status_code=404, detail="User not found")
         return user
 
-#check any_roles
 def require_role(*roles: Role):
-    def role_checker(user: User = Depends(get_current_user)):
+    async def role_checker(user: User = Depends(get_current_user)):
         if user.role not in roles:
             raise HTTPException(status_code=403, detail="Insufficient permissions")
         return user
