@@ -8,7 +8,7 @@ from sqlalchemy.future import select
 from sqlalchemy import func
 from app.dependencies import require_role, get_current_user
 from app.models import User, Role
-from app.database import get_async_session, AsyncSessionLocal
+from app.database import get_async_session
 from app.schemas import UserUpdateForm
 
 router = APIRouter()

@@ -1,13 +1,8 @@
 from dataclasses import dataclass
-from pydantic import BaseModel, EmailStr, Field, ValidationError
+from pydantic import BaseModel, EmailStr, Field, ConfigDict, model_serializer
 from typing import Optional
-from enum import Enum
 from fastapi import Form, UploadFile, File
-
-class Role(str, Enum):
-    ADMIN = "admin"
-    MANAGER = "manager"
-    USER = "user"
+from app.models import Role
 
 class UserBase(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
@@ -56,8 +51,13 @@ class UserInDB(UserBase):
         from_attributes = True
 
 class UserResponse(UserInDB):
-    class Config:
-        fields = {"auth0_id": {"exclude": True}}
+    model_config = ConfigDict(from_attributes=True)
+
+    @model_serializer
+    def serialize(self):
+        data = self.model_dump()
+        data.pop('auth0_id', None)
+        return data
 
 class Token(BaseModel):
     access_token: str

@@ -1,6 +1,5 @@
 import os
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, HTTPException
 from app.models import User
 from app.database import AsyncSessionLocal
 import jwt
@@ -10,15 +9,6 @@ import httpx
 
 router = APIRouter()
 
-# OAuth2 OAuth2AuthorizationCodeBearer is used for Authorization Code Flow
-# If needed, you can configure it further to include scopes or other custom parameters
-# This is not mandatory for the registration flow, so we will use this later if needed
-# oauth2_scheme = OAuth2AuthorizationCodeBearer(
-#     authorizationUrl=f"https://{os.getenv('AUTH0_DOMAIN')}/authorize",
-#     tokenUrl=f"https://{os.getenv('AUTH0_DOMAIN')}/oauth/token"
-# )
-
-# Login route to redirect to Auth0 login page
 @router.get("/login")
 async def login():
     return {
@@ -37,7 +27,6 @@ async def callback(code: str):
     client_secret = os.getenv('AUTH0_CLIENT_SECRET')
     redirect_uri = os.getenv('AUTH0_REDIRECT_URL')
 
-    # Exchange code for tokens
     async with httpx.AsyncClient() as client:
         response = await client.post(
             token_url,
@@ -60,7 +49,6 @@ async def callback(code: str):
     if not id_token:
         raise HTTPException(status_code=400, detail="Missing id_token")
 
-    # Decode and verify the id_token using Auth0's public key
     jwks_url = f"https://{os.getenv('AUTH0_DOMAIN')}/.well-known/jwks.json"
     jwks_client = PyJWKClient(jwks_url)
     signing_key = jwks_client.get_signing_key_from_jwt(id_token)

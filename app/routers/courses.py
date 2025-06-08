@@ -29,7 +29,7 @@ async def create_course(
     session: AsyncSession = Depends(get_async_session),
     _ = Depends(require_role(Role.MANAGER, Role.ADMIN)),
 ):
-    new_course = Course(**course.dict())
+    new_course = Course(**course.model_dump())
     session.add(new_course)
     await session.commit()
     await session.refresh(new_course)
@@ -47,7 +47,7 @@ async def update_course(
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
 
-    for key, value in updated_data.dict(exclude_unset=True).items():
+    for key, value in updated_data.model_dump(exclude_unset=True).items():
         setattr(course, key, value)
 
     await session.commit()

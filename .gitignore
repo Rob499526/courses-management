@@ -94,3 +94,5 @@ bandit.json
 # Docker
 *.pid
 
+static/avatars/*
+!static/avatars/.gitkeep
