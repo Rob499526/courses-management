@@ -62,12 +62,14 @@ class TokenData(BaseModel):
     email: Optional[str] = None
     roles: list[str] = []
 
+from pydantic import Field
+
 class CourseCreate(BaseModel):
-    title: str
+    title: str = Field(..., min_length=1)
     description: str | None = None
 
 class CourseUpdate(BaseModel):
-    title: str
+    title: str = Field(..., min_length=1)
     description: str | None = None
 
 class CourseRead(CourseCreate):
