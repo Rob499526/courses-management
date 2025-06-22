@@ -43,21 +43,15 @@ class UserUpdateForm:
         return _as_form
 
 class UserInDB(UserBase):
-    id: str
+    id: int
     role: Role
     auth0_id: str
 
-    class Config:
-        from_attributes = True
-
-class UserResponse(UserInDB):
     model_config = ConfigDict(from_attributes=True)
 
-    @model_serializer
-    def serialize(self):
-        data = self.model_dump()
-        data.pop('auth0_id', None)
-        return data
+class UserResponse(UserInDB):
+    auth0_id: str = Field(..., exclude=True)
+    model_config = ConfigDict(from_attributes=True)
 
 class Token(BaseModel):
     access_token: str
@@ -79,5 +73,6 @@ class CourseUpdate(BaseModel):
 class CourseRead(CourseCreate):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+
+UserRead = UserResponse

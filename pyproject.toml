@@ -19,6 +19,10 @@ requests = "^2.32.3"
 pyjwt = {extras = ["crypto"], version = "^2.10.1"}
 httpx = "^0.28.1"
 python-multipart = "^0.0.20"
+alembic = "^1.16.1"
+psycopg2-binary = "^2.9.10"
+pytest = "^8.4.0"
+pytest-asyncio = "^1.0.0"
 
 
 [build-system]
