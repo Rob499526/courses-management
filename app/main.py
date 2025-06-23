@@ -3,7 +3,7 @@ from app.database import engine
 from app.middlewares.cors import add_cors_middleware
 from app.middlewares.execution_time import add_execution_time_middleware
 from app.models import Base
-from app.routers import auth, users, courses
+from app.routers import auth, users, courses, websockets
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 
@@ -22,5 +22,6 @@ add_execution_time_middleware(app)
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(users.router, prefix="/users", tags=["users"])
 app.include_router(courses.router, prefix="/courses", tags=["courses"])
+app.include_router(websockets.router)
 #ToDo: add scheduled task for course deadline calculation celery
 # add websocket endpoint (user ask)
