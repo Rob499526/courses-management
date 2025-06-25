@@ -1,23 +1,31 @@
-from sqlalchemy import Column, String, Integer, Text, ForeignKey, Table
-from sqlalchemy.dialects.postgresql import ENUM
+from sqlalchemy import Column, String, Integer, Text, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import ENUM
+from datetime import datetime
+import enum
 
 from app.database import Base
-import enum
+
 
 class Role(enum.Enum):
     ADMIN = "admin"
     MANAGER = "manager"
     USER = "user"
 
+
 role_enum = ENUM(Role, name="role")
 
-user_course_table = Table(
-    "user_course",
-    Base.metadata,
-    Column("user_id", ForeignKey("users.id"), primary_key=True),
-    Column("course_id", ForeignKey("courses.id"), primary_key=True),
-)
+
+class UserCourse(Base):
+    __tablename__ = "user_course"
+
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    course_id = Column(Integer, ForeignKey("courses.id"), primary_key=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    user = relationship("User", back_populates="user_courses")
+    course = relationship("Course", back_populates="user_courses")
+
 
 class User(Base):
     __tablename__ = "users"
@@ -29,10 +37,14 @@ class User(Base):
     avatar = Column(String(200))
     role = Column(role_enum, default=Role.USER)
     auth0_id = Column(String(100), unique=True, index=True)
-    courses = relationship("Course", secondary="user_course", back_populates="users")
+
+    user_courses = relationship("UserCourse", back_populates="user")
+
+    courses = relationship("Course", secondary="user_course", viewonly=True)
 
     def __repr__(self):
         return f"<User(id={self.id}, username='{self.username}', email='{self.email}', role='{self.role.name}')>"
+
 
 class Course(Base):
     __tablename__ = "courses"
@@ -40,8 +52,10 @@ class Course(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(100), nullable=False)
     description = Column(Text)
-    users = relationship("User", secondary="user_course", back_populates="courses")
+
+    user_courses = relationship("UserCourse", back_populates="course")
+
+    users = relationship("User", secondary="user_course", viewonly=True)
 
     def __repr__(self):
         return f"<Course(id={self.id}, title='{self.title}')>"
-

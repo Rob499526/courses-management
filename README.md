@@ -3,6 +3,12 @@ lt --port 8000 --subdomain coursemanagement
 poetry run uvicorn app.main:app --reload
 PYTEST_ASYNCIO_MODE=auto poetry run pytest tests/ -v
 
+poetry run python
+from app.tasks import check_course_deadlines
+check_course_deadlines.delay()
+poetry run celery -A app.celery_app.celery_app beat --loglevel=info
+poetry run celery -A app.celery_app.celery_app worker --loglevel=info
+
 # Courses Management API
 
 A FastAPI-based application for managing courses and user enrollments.

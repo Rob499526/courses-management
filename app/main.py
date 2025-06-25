@@ -23,5 +23,3 @@ app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(users.router, prefix="/users", tags=["users"])
 app.include_router(courses.router, prefix="/courses", tags=["courses"])
 app.include_router(websockets.router)
-#ToDo: add scheduled task for course deadline calculation celery
-# add websocket endpoint (user ask)
